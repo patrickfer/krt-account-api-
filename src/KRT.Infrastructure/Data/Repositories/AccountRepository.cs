@@ -15,14 +15,26 @@ public sealed class AccountRepository : IAccountRepository
     public async Task<Account?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         => await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
 
-    public async Task<IEnumerable<Account>> GetAllAsync(AccountStatus? status = null, CancellationToken cancellationToken = default)
+    public async Task<(IEnumerable<Account> Items, int TotalCount)> GetAllAsync(
+        AccountStatus? status = null,
+        int pageNumber = 1,
+        int pageSize = 20,
+        CancellationToken cancellationToken = default)
     {
         var query = _context.Accounts.AsNoTracking();
 
         if (status.HasValue)
             query = query.Where(a => a.Status == status.Value);
 
-        return await query.ToListAsync(cancellationToken);
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderBy(a => a.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
     }
 
     public async Task<bool> ExistsByCpfAsync(string cpf, CancellationToken cancellationToken = default)

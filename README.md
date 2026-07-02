@@ -116,20 +116,38 @@ Base route: `/api/accounts`
 
 | Verbo  | Rota                  | Descrição                                   | Body / Query                          | Respostas                       |
 |--------|-----------------------|----------------------------------------------|----------------------------------------|----------------------------------|
-| GET    | `/api/accounts`       | Lista contas, com filtro opcional por status | `?status=Active\|Inactive`             | `200 OK` — `AccountDto[]`        |
+| GET    | `/api/accounts`       | Lista contas, paginada, com filtro opcional por status | `?status=Active\|Inactive&pageNumber=1&pageSize=20` | `200 OK` — `PagedResult<AccountDto>` |
 | GET    | `/api/accounts/{id}`  | Busca conta por Id                           | -                                       | `200 OK` / `404 Not Found`       |
 | POST   | `/api/accounts`       | Cria uma nova conta                          | `{ "holderName": string, "cpf": string }` | `201 Created` / `400` / `422`  |
 | PUT    | `/api/accounts/{id}`  | Atualiza o nome do titular                   | `{ "holderName": string }`             | `204 No Content` / `400` / `404` |
 | DELETE | `/api/accounts/{id}`  | Desativa a conta (soft delete)               | -                                       | `204 No Content` / `404` / `422` |
 
-### Formato de resposta (`AccountDto`)
+### Paginação (`GET /api/accounts`)
+
+A listagem de contas é paginada via query string:
+
+- `pageNumber` (opcional, padrão `1`)
+- `pageSize` (opcional, padrão `20`)
+- `status` (opcional, filtra por `Active` ou `Inactive`)
+
+Exemplo: `GET /api/accounts?status=Active&pageNumber=2&pageSize=50`
+
+### Formato de resposta (`PagedResult<AccountDto>`)
 
 ```json
 {
-  "id": "guid",
-  "holderName": "string",
-  "cpf": "string",
-  "status": "Active | Inactive"
+  "items": [
+    {
+      "id": "guid",
+      "holderName": "string",
+      "cpf": "string",
+      "status": "Active | Inactive"
+    }
+  ],
+  "pageNumber": 1,
+  "pageSize": 20,
+  "totalCount": 42,
+  "totalPages": 3
 }
 ```
 

@@ -3,6 +3,7 @@ using KRT.Application.Accounts.Commands.DeleteAccount;
 using KRT.Application.Accounts.Commands.UpdateAccount;
 using KRT.Application.Accounts.Queries.GetAccountById;
 using KRT.Application.Accounts.Queries.GetAllAccounts;
+using KRT.Application.Common.Models;
 using KRT.Domain.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -19,10 +20,14 @@ public sealed class AccountsController : ControllerBase
     public AccountsController(IMediator mediator) => _mediator = mediator;
 
     [HttpGet]
-    [ProducesResponseType(typeof(IEnumerable<AccountDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll([FromQuery] AccountStatus? status, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(PagedResult<AccountDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAll(
+        [FromQuery] AccountStatus? status,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 20,
+        CancellationToken cancellationToken = default)
     {
-        var result = await _mediator.Send(new GetAllAccountsQuery(status), cancellationToken);
+        var result = await _mediator.Send(new GetAllAccountsQuery(status, pageNumber, pageSize), cancellationToken);
         return Ok(result);
     }
 
