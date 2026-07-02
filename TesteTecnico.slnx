@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/KRT.API/KRT.API.csproj" />
+    <Project Path="src/KRT.Application/KRT.Application.csproj" />
+    <Project Path="src/KRT.Domain/KRT.Domain.csproj" />
+    <Project Path="src/KRT.Infrastructure/KRT.Infrastructure.csproj" />
+    <Project Path="src/KRT.IoC/KRT.IoC.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/KRT.Application.Tests/KRT.Application.Tests.csproj" />
+    <Project Path="tests/KRT.Domain.Tests/KRT.Domain.Tests.csproj" />
+  </Folder>
+</Solution>
